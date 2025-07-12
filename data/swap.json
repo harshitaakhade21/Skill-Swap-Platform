@@ -1,1 +1,8 @@
-[]
+[
+    {
+        "from": "Jane Smith",
+        "to": "John Doe",
+        "skill": "any",
+        "status": "accepted"
+    }
+]
