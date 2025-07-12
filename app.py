@@ -30,10 +30,10 @@ st.sidebar.header("Create Your Profile")
 name = st.sidebar.text_input("Name")
 skills_offered = st.sidebar.text_input("Skills you offer (comma-separated)")
 skills_wanted = st.sidebar.text_input("Skills you want (comma-separated)")
-availability = st.sidebar.text_input("Availability", ["weekdays", "weekends","Evening", "Flexible"])
+availability = st.sidebar.selectbox("Availability", ["Weekdays", "Weekends", "Evening", "Flexible"])
 profile_photo = st.sidebar.checkbox("Make my profile public", value=True)
 
-if st.didebar.button("Submit Profile"):
+if st.sidebar.button("Submit Profile"):
     if name and skills_offered and skills_wanted:
         user_data = {
             "name": name,
@@ -63,10 +63,13 @@ for user in users:
 
 if filtered_users:
     for user in filtered_users:
-        st.markdown(f"** {user['name']}**")
-        st.markdown(f" *Offers:* {', '.join(user['skills_offered'])}")
-        st.markdown(f" *Wants:* {', '.join(user['skills_wanted'])}")
-        st.markdown(f"*Availability:* {user['availability']}")
+        st.markdown(f"""
+        {user['name']}
+
+        Offers:{', '.join(user['skills_offered'])}
+        Wants:{', '.join(user['skills_wanted'])}
+        Availability:{user['availability']}
+""")
         st.divider()
 else:
     st.info("No matching profiles found. Try another skill or create one!")
