@@ -43,6 +43,10 @@ A web-based platform that enables users to list the skills they offer, request s
 git clone https://github.com/harshitaakhade21/Skill-Swap-Platform.git
 cd Skill-Swap-Platform
 
+## Team
+**Name**: Harshita Akhade  
+**Email**: harshitaakhade21@gmail.com
+
 # Install dependencies
 pip install -r requirements.txt
 
