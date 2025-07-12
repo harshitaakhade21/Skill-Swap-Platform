@@ -25,4 +25,9 @@ st.title("Skill Swap Platform")
 
 st.sidebar.header("Create Your Profile")
 
-name = 
+name = st.sidebar.text_input("Name")
+skills_offered = st.sidebar.text_input("Skills you offer (comma-separated)")
+skills_wanted = st.sidebar.text_input("Skills you want (comma-separated)")
+availability = st.sidebar.text_input("Availability", ["weekdays", "weekends","Evening", "Flexible"])
+profile_photo = st.sidebar.checkbox("Make my profile public", value=True)
+
