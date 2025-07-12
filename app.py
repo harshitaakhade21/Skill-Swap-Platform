@@ -8,6 +8,29 @@ from sympy import public
 #path to local JSON storage
 DATA_FILE = "data/users.josn"
 
+SWAP_FILE = "data/swaps.json"
+
+def load_swaps():
+    if os.path.exists(SWAP_FILE):
+        with open(SWAP_FILE, "r") as file:
+            return json.load(file)
+    return []
+
+def save_swaps(swaps):
+    with open(SWAP_FILE, "w") as file:
+        json.dump(swaps, file, indent=4)
+
+def send_swap_request(from_user, to_user, skill):
+    swaps = load_swaps()
+    request = {
+        "from": from_user,
+        "to": to_user,
+        "skill": skill,
+        "status": "pending"
+    }
+    swaps.append(request)
+    save_swaps(swaps)
+
 #Load existing users
 def load_users():
     if os.path.exists(DATA_FILE):
@@ -51,6 +74,19 @@ if st.sidebar.button("Submit Profile"):
     # Main Section: View Profiles
 st.subheader("Browse Public Profiles by Skill")
 
+st.subheader("My Swap Requests")
+
+swaps = load_swaps()
+
+# Outgoing requests
+outgoing = [s for s in swaps if s["from"] == name]
+if outgoing:
+    for req in outgoing:
+        st.markdown(f"You requested **{req['skill']}** from **{req['to']}** – *Status: {req['status']}*")
+else:
+    st.info("No outgoing swap requests.")
+
+
 search_skill = st.text_input("Search by skill (e.g., Python, Design)")
 users = load_users()
 
@@ -70,6 +106,12 @@ if filtered_users:
         Wants:{', '.join(user['skills_wanted'])}
         Availability:{user['availability']}
 """)
+    # Skip button if you're viewing your own profile
+    if user["name"] != name:
+        if st.button(f"Send Swap Request to {user['name']} for {search_skill}", key=user['name']):
+            send_swap_request(name, user["name"], search_skill)
+            st.success(f"Swap request sent to {user['name']}!")
+
         st.divider()
 else:
     st.info("No matching profiles found. Try another skill or create one!")
