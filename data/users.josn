@@ -1,0 +1,13 @@
+[
+    {
+        "name": "Max",
+        "skills_offered": [
+            "c++"
+        ],
+        "skills_wanted": [
+            "python"
+        ],
+        "availability": "Flexible",
+        "public": true
+    }
+]

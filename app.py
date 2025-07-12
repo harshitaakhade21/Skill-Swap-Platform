@@ -3,10 +3,23 @@ import pandas as pd
 import json
 import os
 
-from sympy import public
+
+FEEDBACK_FILE = "data/feedback.json"
+
+def load_feedback():
+    if os.path.exists(FEEDBACK_FILE):
+        with open(FEEDBACK_FILE, "r") as file:
+            return json.load(file)
+    return []
+
+def save_feedback(new_feedback):
+    feedbacks = load_feedback()
+    feedbacks.append(new_feedback)
+    with open(FEEDBACK_FILE, "w") as file:
+        json.dump(feedbacks, file, indent=4)
 
 #path to local JSON storage
-DATA_FILE = "data/users.josn"
+DATA_FILE = "data/users.json"
 
 SWAP_FILE = "data/swaps.json"
 
@@ -74,19 +87,41 @@ if st.sidebar.button("Submit Profile"):
     # Main Section: View Profiles
 st.subheader("Browse Public Profiles by Skill")
 
+# Outgoing requests
 st.subheader("My Swap Requests")
 
 swaps = load_swaps()
 
-# Outgoing requests
 outgoing = [s for s in swaps if s["from"] == name]
+
 if outgoing:
-    for req in outgoing:
-        st.markdown(f"You requested **{req['skill']}** from **{req['to']}** – *Status: {req['status']}*")
+    for i, req in enumerate(outgoing):
+        col1, col2 = st.columns([4, 1])
+        with col1:
+            st.markdown(f"➡️ You requested **{req['skill']}** from **{req['to']}** – *Status: {req['status']}*")
+
+        with col2:
+            if req["status"] == "pending":
+                if st.button("Delete", key=f"delete_{i}"):
+                    swaps.remove(req)
+                    save_swaps(swaps)
+                    st.warning(f"Deleted request to {req['to']}")
+        if req["status"] == "accepted":
+            with st.expander("💬 Leave Feedback"):
+                fb = st.text_input("Your feedback", key=f"fb_{i}")
+                if st.button("Submit Feedback", key=f"submit_fb_{i}"):
+                    feedback_data = {
+                        "from": name,
+                        "to": req["to"],
+                        "skill": req["skill"],
+                        "message": fb
+                    }
+                    save_feedback(feedback_data)
+                    st.success("Thanks for your feedback!")
 else:
     st.info("No outgoing swap requests.")
 
-st.subheader("📥 Incoming Swap Requests")
+st.subheader("Incoming Swap Requests")
 
 incoming = [s for s in swaps if s["to"] == name and s["status"] == "pending"]
 
@@ -97,8 +132,8 @@ if incoming:
             st.markdown(f"**{req['from']}** wants to swap for **{req['skill']}**")
 
         with col2:
-            accept = st.button(f"✅ Accept {i}", key=f"accept_{i}")
-            reject = st.button(f"❌ Reject {i}", key=f"reject_{i}")
+            accept = st.button(f" Accept {i}", key=f"accept_{i}")
+            reject = st.button(f" Reject {i}", key=f"reject_{i}")
 
         if accept:
             req["status"] = "accepted"
@@ -125,19 +160,30 @@ for user in users:
 if filtered_users:
     for user in filtered_users:
         st.markdown(f"""
-        {user['name']}
+        **{user['name']}**
+        **Offers:** {', '.join(user['skills_offered'])}
+        **Wants:** {', '.join(user['skills_wanted'])}
+        **Availability:** {user['availability']}
+        """)
 
-        Offers:{', '.join(user['skills_offered'])}
-        Wants:{', '.join(user['skills_wanted'])}
-        Availability:{user['availability']}
-""")
-    # Skip button if you're viewing your own profile
-    if user["name"] != name:
-        if st.button(f"Send Swap Request to {user['name']} for {search_skill}", key=user['name']):
-            send_swap_request(name, user["name"], search_skill)
-            st.success(f"Swap request sent to {user['name']}!")
+
+        if user["name"] != name:
+            if st.button(f"Send Swap Request to {user['name']} for {search_skill or 'any'}", key=user['name']):
+                send_swap_request(name, user["name"], search_skill or "any")
+                st.success(f"Swap request sent to {user['name']}!")
 
         st.divider()
 else:
     st.info("No matching profiles found. Try another skill or create one!")
+
+st.subheader("Feedback Given")
+
+all_feedback = load_feedback()
+my_feedback = [f for f in all_feedback if f["from"] == name]
+
+if my_feedback:
+    for f in my_feedback:
+        st.markdown(f"- To **{f['to']}** on *{f['skill']}*: {f['message']}")
+else:
+    st.info("No feedback submitted yet.")
 
