@@ -1,0 +1,13 @@
+[
+    {
+        "name": "Harshita",
+        "skills_offered": [
+            "Python"
+        ],
+        "skills_wanted": [
+            "Machine Learning"
+        ],
+        "availability": "['weekdays', 'weekends', 'Evening', 'Flexible']",
+        "public": true
+    }
+]
