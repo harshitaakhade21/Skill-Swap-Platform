@@ -1,13 +1,11 @@
 [
-    {
-        "name": "Harshita",
-        "skills_offered": [
-            "Python"
-        ],
-        "skills_wanted": [
-            "Machine Learning"
-        ],
-        "availability": "['weekdays', 'weekends', 'Evening', 'Flexible']",
-        "public": true
-    }
+  {
+    "name": "Harshita",
+    "email": "harshita@example.com",
+    "password": "pass123",
+    "skills_offered": ["Python"],
+    "skills_wanted": ["Machine Learning"],
+    "availability": "Weekends",
+    "public": true
+  }
 ]

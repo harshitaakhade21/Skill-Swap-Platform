@@ -1,189 +1,155 @@
 import streamlit as st
-import pandas as pd
 import json
 import os
 
-
+USER_FILE = "data/users.json"
+SWAP_FILE = "data/swap.json"
 FEEDBACK_FILE = "data/feedback.json"
 
-def load_feedback():
-    if os.path.exists(FEEDBACK_FILE):
-        with open(FEEDBACK_FILE, "r") as file:
-            return json.load(file)
-    return []
+# ===== Utility Functions =====
+def load_json(file_path):
+    return json.load(open(file_path)) if os.path.exists(file_path) else []
 
-def save_feedback(new_feedback):
-    feedbacks = load_feedback()
-    feedbacks.append(new_feedback)
-    with open(FEEDBACK_FILE, "w") as file:
-        json.dump(feedbacks, file, indent=4)
+def save_json(file_path, data):
+    with open(file_path, "w") as f:
+        json.dump(data, f, indent=4)
 
-#path to local JSON storage
-DATA_FILE = "data/users.json"
+def load_users(): return load_json(USER_FILE)
+def save_users(users): save_json(USER_FILE, users)
 
-SWAP_FILE = "data/swaps.json"
+def load_swaps(): return load_json(SWAP_FILE)
+def save_swaps(data): save_json(SWAP_FILE, data)
 
-def load_swaps():
-    if os.path.exists(SWAP_FILE):
-        with open(SWAP_FILE, "r") as file:
-            return json.load(file)
-    return []
+def load_feedback(): return load_json(FEEDBACK_FILE)
+def save_feedback(data): save_json(FEEDBACK_FILE, load_feedback() + [data])
 
-def save_swaps(swaps):
-    with open(SWAP_FILE, "w") as file:
-        json.dump(swaps, file, indent=4)
-
-def send_swap_request(from_user, to_user, skill):
-    swaps = load_swaps()
-    request = {
-        "from": from_user,
-        "to": to_user,
-        "skill": skill,
-        "status": "pending"
-    }
-    swaps.append(request)
-    save_swaps(swaps)
-
-#Load existing users
-def load_users():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, "r") as file:
-            return json.load(file)
-    return []
-
-# save user to JSON
-def save_user(user_data):
+# ====== Login Logic ======
+def login_user(email, password):
     users = load_users()
-    users.append(user_data)
-    with open(DATA_FILE, "w") as file:
-        json.dump(users, file, indent=4)
+    for user in users:
+        if user.get("email") == email and user.get("password") == password:
+            return user
+    return None
 
-st.set_page_config(page_title="Skill Swap Platform", layout="centered")
-st.title("Skill Swap Platform")
+# ====== Auth Gate ======
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+    st.session_state.user = {}
 
-st.sidebar.header("Create Your Profile")
+# ====== Login Page ======
+if not st.session_state.logged_in:
+    st.title("🔐 Skill Swap Platform Login")
 
-name = st.sidebar.text_input("Name")
-skills_offered = st.sidebar.text_input("Skills you offer (comma-separated)")
-skills_wanted = st.sidebar.text_input("Skills you want (comma-separated)")
-availability = st.sidebar.selectbox("Availability", ["Weekdays", "Weekends", "Evening", "Flexible"])
-profile_photo = st.sidebar.checkbox("Make my profile public", value=True)
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
 
-if st.sidebar.button("Submit Profile"):
-    if name and skills_offered and skills_wanted:
-        user_data = {
-            "name": name,
-            "skills_offered": [s.strip() for s in skills_offered.split(",")],
-            "skills_wanted": [s.strip() for s in skills_wanted.split(",")],
-            "availability": availability,
-            "public": profile_photo
-            
-        }
-        save_user(user_data)
-        st.success("Profile submitted successfully!")
-    else:
-        st.warning("Please fill in all fields before submitting.")            
-                         
-    # Main Section: View Profiles
-st.subheader("Browse Public Profiles by Skill")
+    if st.button("Login"):
+        user = login_user(email, password)
+        if user:
+            st.session_state.logged_in = True
+            st.session_state.user = user
+            st.success("✅ Login successful!")
+            st.rerun()
+        else:
+            st.error("❌ Invalid email or password")
 
-# Outgoing requests
-st.subheader("My Swap Requests")
+    st.markdown("ℹ️ Your account must be pre-created in `users.json`")
 
-swaps = load_swaps()
+# ====== Main App ======
+else:
+    user = st.session_state.user
+    name = user["name"]
 
-outgoing = [s for s in swaps if s["from"] == name]
+    st.sidebar.title(f"👋 Welcome, {name}")
+    if st.sidebar.button("Logout"):
+        st.session_state.logged_in = False
+        st.session_state.user = {}
+        st.rerun()
 
-if outgoing:
-    for i, req in enumerate(outgoing):
-        col1, col2 = st.columns([4, 1])
-        with col1:
-            st.markdown(f"➡️ You requested **{req['skill']}** from **{req['to']}** – *Status: {req['status']}*")
+    st.title("🔁 Skill Swap Platform")
 
-        with col2:
-            if req["status"] == "pending":
-                if st.button("Delete", key=f"delete_{i}"):
-                    swaps.remove(req)
-                    save_swaps(swaps)
-                    st.warning(f"Deleted request to {req['to']}")
-        if req["status"] == "accepted":
-            with st.expander("💬 Leave Feedback"):
-                fb = st.text_input("Your feedback", key=f"fb_{i}")
-                if st.button("Submit Feedback", key=f"submit_fb_{i}"):
-                    feedback_data = {
+    tabs = st.tabs(["Profiles", "My Requests", "Incoming", "Feedback"])
+
+    # ===== Tab 1: Browse Profiles =====
+    with tabs[0]:
+        st.subheader("🔍 Browse Public Profiles by Skill")
+        search_skill = st.text_input("Search skill (e.g., Python, Excel)")
+        users = load_users()
+        filtered_users = [
+            u for u in users
+            if u["public"] and u["name"] != name and (
+                search_skill.lower() in [s.lower() for s in u["skills_offered"]] or search_skill == "")
+        ]
+
+        for u in filtered_users:
+            with st.expander(f"👤 {u['name']} — Offers: {', '.join(u['skills_offered'])}"):
+                st.markdown(f"- 🎯 Wants: {', '.join(u['skills_wanted'])}")
+                st.markdown(f"- 🕒 Availability: {u['availability']}")
+                if st.button(f"Send Request to {u['name']}", key=u['name']):
+                    swaps = load_swaps()
+                    swaps.append({
                         "from": name,
-                        "to": req["to"],
-                        "skill": req["skill"],
-                        "message": fb
-                    }
-                    save_feedback(feedback_data)
-                    st.success("Thanks for your feedback!")
-else:
-    st.info("No outgoing swap requests.")
+                        "to": u['name'],
+                        "skill": search_skill or "any",
+                        "status": "pending"
+                    })
+                    save_swaps(swaps)
+                    st.success(f"📨 Request sent to {u['name']}!")
 
-st.subheader("Incoming Swap Requests")
+    # ===== Tab 2: Outgoing Requests =====
+    with tabs[1]:
+        st.subheader("📤 My Swap Requests")
+        swaps = load_swaps()
+        outgoing = [s for s in swaps if s["from"] == name]
+        if outgoing:
+            for i, req in enumerate(outgoing):
+                with st.expander(f"➡️ To: {req['to']} | Skill: {req['skill']} | Status: {req['status']}"):
+                    if req["status"] == "pending":
+                        if st.button("🗑️ Delete", key=f"delete_{i}"):
+                            swaps.remove(req)
+                            save_swaps(swaps)
+                            st.warning(f"🗑️ Deleted request to {req['to']}")
+                    if req["status"] == "accepted":
+                        fb = st.text_input("💬 Leave feedback", key=f"fb_{i}")
+                        if st.button("Submit Feedback", key=f"submit_fb_{i}"):
+                            save_feedback({
+                                "from": name,
+                                "to": req["to"],
+                                "skill": req["skill"],
+                                "message": fb
+                            })
+                            st.success("✅ Feedback submitted!")
+        else:
+            st.info("No outgoing requests.")
 
-incoming = [s for s in swaps if s["to"] == name and s["status"] == "pending"]
+    # ===== Tab 3: Incoming Requests =====
+    with tabs[2]:
+        st.subheader("📥 Incoming Swap Requests")
+        incoming = [s for s in swaps if s["to"] == name and s["status"] == "pending"]
+        if incoming:
+            for i, req in enumerate(incoming):
+                with st.expander(f"📩 From: {req['from']} | Skill: {req['skill']}"):
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        if st.button("✅ Accept", key=f"accept_{i}"):
+                            req["status"] = "accepted"
+                            save_swaps(swaps)
+                            st.success(f"Accepted request from {req['from']}")
+                    with col2:
+                        if st.button("❌ Reject", key=f"reject_{i}"):
+                            req["status"] = "rejected"
+                            save_swaps(swaps)
+                            st.warning(f"Rejected request from {req['from']}")
+        else:
+            st.info("No incoming requests.")
 
-if incoming:
-    for i, req in enumerate(incoming):
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            st.markdown(f"**{req['from']}** wants to swap for **{req['skill']}**")
-
-        with col2:
-            accept = st.button(f" Accept {i}", key=f"accept_{i}")
-            reject = st.button(f" Reject {i}", key=f"reject_{i}")
-
-        if accept:
-            req["status"] = "accepted"
-            save_swaps(swaps)
-            st.success(f"Accepted request from {req['from']}!")
-
-        if reject:
-            req["status"] = "rejected"
-            save_swaps(swaps)
-            st.warning(f"Rejected request from {req['from']}.")
-else:
-    st.info("No incoming requests right now.")
-
-search_skill = st.text_input("Search by skill (e.g., Python, Design)")
-users = load_users()
-
-# Filter by search
-filtered_users = []
-for user in users:
-    if user["public"] and (
-        search_skill.lower() in [s.lower() for s in user["skills_offered"]] or search_skill == ""):
-        filtered_users.append(user)
-
-if filtered_users:
-    for user in filtered_users:
-        st.markdown(f"""
-        **{user['name']}**
-        **Offers:** {', '.join(user['skills_offered'])}
-        **Wants:** {', '.join(user['skills_wanted'])}
-        **Availability:** {user['availability']}
-        """)
-
-
-        if user["name"] != name:
-            if st.button(f"Send Swap Request to {user['name']} for {search_skill or 'any'}", key=user['name']):
-                send_swap_request(name, user["name"], search_skill or "any")
-                st.success(f"Swap request sent to {user['name']}!")
-
-        st.divider()
-else:
-    st.info("No matching profiles found. Try another skill or create one!")
-
-st.subheader("Feedback Given")
-
-all_feedback = load_feedback()
-my_feedback = [f for f in all_feedback if f["from"] == name]
-
-if my_feedback:
-    for f in my_feedback:
-        st.markdown(f"- To **{f['to']}** on *{f['skill']}*: {f['message']}")
-else:
-    st.info("No feedback submitted yet.")
-
+    # ===== Tab 4: Feedback Given =====
+    with tabs[3]:
+        st.subheader("⭐ Feedback Given")
+        feedbacks = load_feedback()
+        my_feedback = [f for f in feedbacks if f["from"] == name]
+        if my_feedback:
+            for f in my_feedback:
+                st.markdown(f"- ✨ To **{f['to']}** on *{f['skill']}*: “{f['message']}”")
+        else:
+            st.info("You haven’t submitted any feedback yet.")
