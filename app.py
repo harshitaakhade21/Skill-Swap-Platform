@@ -86,7 +86,7 @@ if outgoing:
 else:
     st.info("No outgoing swap requests.")
 
-st.subheader("📥 Incoming Swap Requests")
+st.subheader("Incoming Swap Requests")
 
 incoming = [s for s in swaps if s["to"] == name and s["status"] == "pending"]
 
@@ -97,8 +97,8 @@ if incoming:
             st.markdown(f"**{req['from']}** wants to swap for **{req['skill']}**")
 
         with col2:
-            accept = st.button(f"✅ Accept {i}", key=f"accept_{i}")
-            reject = st.button(f"❌ Reject {i}", key=f"reject_{i}")
+            accept = st.button(f"Accept {i}", key=f"accept_{i}")
+            reject = st.button(f"Reject {i}", key=f"reject_{i}")
 
         if accept:
             req["status"] = "accepted"
