@@ -36,6 +36,10 @@ A web-based platform that enables users to list the skills they offer, request s
 
 ## Screenshots
 
+## Team
+**Name**: Harshita Akhade  
+**Email**: harshitaakhade21@gmail.com
+
 ## Installation
 
 ```bash
