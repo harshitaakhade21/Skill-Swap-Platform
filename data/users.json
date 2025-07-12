@@ -1,25 +1,342 @@
 [
-  {
-    "email": "john@example.com",
-    "password": "1234",  
-    "name": "John Doe",
-    "location": "New York",
-    "skills_offered": ["Python", "Excel"],
-    "skills_wanted": ["Photoshop", "Video Editing"],
-    "availability": "Weekends",
-    "public": true,
-    "photo": ""  
-  },
-  {
-    "email": "jane@example.com",
-    "password": "abcd",
-    "name": "Jane Smith",
-    "location": "London",
-    "skills_offered": ["Photoshop"],
-    "skills_wanted": ["Python", "Excel"],
-    "availability": "Evenings",
-    "public": false,
-    "photo": ""
-  }
+    {
+        "name": "Andrea Paul",
+        "email": "ellisdavid@example.net",
+        "password": "1234",
+        "location": "Cruzhaven",
+        "skills_offered": [
+            "C++",
+            "Photography"
+        ],
+        "skills_wanted": [
+            "Python",
+            "Graphic Design"
+        ],
+        "availability": "Evenings",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Diana Bailey",
+        "email": "meltonlauren@example.org",
+        "password": "1234",
+        "location": "Lisaland",
+        "skills_offered": [
+            "Python",
+            "Excel"
+        ],
+        "skills_wanted": [
+            "C++",
+            "Data Analysis"
+        ],
+        "availability": "Weekdays",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Jason Harvey",
+        "email": "shellycampbell@example.org",
+        "password": "1234",
+        "location": "New Timothyview",
+        "skills_offered": [
+            "C++",
+            "Photography"
+        ],
+        "skills_wanted": [
+            "Writing",
+            "Graphic Design"
+        ],
+        "availability": "Weekends",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Laura Johnson",
+        "email": "fgonzalez@example.net",
+        "password": "1234",
+        "location": "North Rickstad",
+        "skills_offered": [
+            "Public Speaking",
+            "Data Analysis"
+        ],
+        "skills_wanted": [
+            "Java",
+            "JavaScript"
+        ],
+        "availability": "Evenings",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Nicholas Jones",
+        "email": "elizabethboyd@example.net",
+        "password": "1234",
+        "location": "Thomasberg",
+        "skills_offered": [
+            "C++",
+            "Writing"
+        ],
+        "skills_wanted": [
+            "Photography",
+            "Graphic Design"
+        ],
+        "availability": "Weekends",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Kelsey Mason",
+        "email": "nmorris@example.org",
+        "password": "1234",
+        "location": "Heatherland",
+        "skills_offered": [
+            "Photography",
+            "Graphic Design"
+        ],
+        "skills_wanted": [
+            "Python",
+            "JavaScript"
+        ],
+        "availability": "Weekdays",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Karen Friedman",
+        "email": "aprilrodriguez@example.net",
+        "password": "1234",
+        "location": "Lake Stephanie",
+        "skills_offered": [
+            "Data Analysis",
+            "Excel"
+        ],
+        "skills_wanted": [
+            "Python",
+            "JavaScript"
+        ],
+        "availability": "Weekdays",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Kelly Brooks",
+        "email": "walkerlisa@example.net",
+        "password": "1234",
+        "location": "East Brett",
+        "skills_offered": [
+            "Photography",
+            "C++"
+        ],
+        "skills_wanted": [
+            "Java",
+            "Graphic Design"
+        ],
+        "availability": "Anytime",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Donna Rogers",
+        "email": "mary09@example.com",
+        "password": "1234",
+        "location": "Port Destinyberg",
+        "skills_offered": [
+            "Public Speaking",
+            "JavaScript"
+        ],
+        "skills_wanted": [
+            "C++",
+            "SEO"
+        ],
+        "availability": "Weekdays",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Amanda Lloyd",
+        "email": "ggilbert@example.net",
+        "password": "1234",
+        "location": "Mackenzieland",
+        "skills_offered": [
+            "Graphic Design",
+            "Python"
+        ],
+        "skills_wanted": [
+            "SEO",
+            "JavaScript"
+        ],
+        "availability": "Evenings",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Stephanie Thompson",
+        "email": "vmata@example.net",
+        "password": "1234",
+        "location": "West Lauren",
+        "skills_offered": [
+            "Photography",
+            "Graphic Design"
+        ],
+        "skills_wanted": [
+            "Python",
+            "Public Speaking"
+        ],
+        "availability": "Anytime",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Andrew Green",
+        "email": "joshua77@example.net",
+        "password": "1234",
+        "location": "Port Ryan",
+        "skills_offered": [
+            "Excel",
+            "Python"
+        ],
+        "skills_wanted": [
+            "JavaScript",
+            "Writing"
+        ],
+        "availability": "Weekdays",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Cheryl Fisher",
+        "email": "ojones@example.com",
+        "password": "1234",
+        "location": "Lindseyside",
+        "skills_offered": [
+            "Data Analysis",
+            "SEO"
+        ],
+        "skills_wanted": [
+            "C++",
+            "Python"
+        ],
+        "availability": "Anytime",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Kendra Quinn",
+        "email": "ashley04@example.net",
+        "password": "1234",
+        "location": "Kelleymouth",
+        "skills_offered": [
+            "SEO",
+            "Photography"
+        ],
+        "skills_wanted": [
+            "Public Speaking",
+            "C++"
+        ],
+        "availability": "Anytime",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Sarah Williams",
+        "email": "smithnatalie@example.org",
+        "password": "1234",
+        "location": "Cindychester",
+        "skills_offered": [
+            "Writing",
+            "C++"
+        ],
+        "skills_wanted": [
+            "Graphic Design",
+            "Public Speaking"
+        ],
+        "availability": "Anytime",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Randall Johnson",
+        "email": "robinsonrobert@example.com",
+        "password": "1234",
+        "location": "Andrewborough",
+        "skills_offered": [
+            "Data Analysis",
+            "Photography"
+        ],
+        "skills_wanted": [
+            "Graphic Design",
+            "JavaScript"
+        ],
+        "availability": "Weekdays",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Samantha Phillips MD",
+        "email": "isaac34@example.net",
+        "password": "1234",
+        "location": "Hannahchester",
+        "skills_offered": [
+            "Python",
+            "JavaScript"
+        ],
+        "skills_wanted": [
+            "Excel",
+            "Graphic Design"
+        ],
+        "availability": "Anytime",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Lori Williams",
+        "email": "anitabrown@example.org",
+        "password": "1234",
+        "location": "East Christophertown",
+        "skills_offered": [
+            "Excel",
+            "JavaScript"
+        ],
+        "skills_wanted": [
+            "Python",
+            "Writing"
+        ],
+        "availability": "Weekends",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Dustin Barker",
+        "email": "chrisfrench@example.org",
+        "password": "1234",
+        "location": "Sandovalland",
+        "skills_offered": [
+            "Excel",
+            "Writing"
+        ],
+        "skills_wanted": [
+            "Python",
+            "SEO"
+        ],
+        "availability": "Weekends",
+        "public": true,
+        "photo": ""
+    },
+    {
+        "name": "Jessica Frye",
+        "email": "scott18@example.com",
+        "password": "1234",
+        "location": "Lake Lisa",
+        "skills_offered": [
+            "Graphic Design",
+            "Public Speaking"
+        ],
+        "skills_wanted": [
+            "Writing",
+            "Photography"
+        ],
+        "availability": "Weekends",
+        "public": true,
+        "photo": ""
+    }
 ]
-
