@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import os
 
+
 USER_FILE = "data/users.json"
 SWAP_FILE = "data/swap.json"
 FEEDBACK_FILE = "data/feedback.json"
@@ -68,7 +69,7 @@ else:
 
     st.title("Skill Swap Platform")
 
-    tabs = st.tabs(["Profiles", "My Requests", "Incoming", "Feedback"])
+    tabs = st.tabs(["Profiles", "My Requests", "Incoming", "Feedback", "Profile"])
 
     # ===== Tab 1: Browse Profiles =====
     with tabs[0]:
@@ -153,3 +154,67 @@ else:
                 st.markdown(f"- To **{f['to']}** on *{f['skill']}*: “{f['message']}”")
         else:
             st.info("You haven’t submitted any feedback yet.")
+
+    # ===== Tab 5: Profile Page =====
+       # ===== Tab 5: Profile Page =====
+    with tabs[4]:
+        st.subheader("My Profile")
+
+        # Define columns first
+        col1, col2 = st.columns(2)
+
+        # Use the columns
+        with col1:
+            name = st.text_input("Name", user.get("name", ""))
+            skills_offered = st.text_input("Skills Offered (comma-separated)", ", ".join(user.get("skills_offered", [])))
+
+        with col2:
+            location = st.text_input("Location", user.get("location", ""))
+            skills_wanted = st.text_input("Skills Wanted (comma-separated)", ", ".join(user.get("skills_wanted", [])))
+
+        availability = st.selectbox(
+            "Availability",
+            ["Weekdays", "Weekends", "Evenings", "Anytime"],
+            index=["Weekdays", "Weekends", "Evenings", "Anytime"].index(user.get("availability", "Weekdays"))
+        )
+
+        is_public = st.checkbox("Make Profile Public", value=user.get("public", False))
+
+        profile_photo = st.file_uploader("Upload Profile Photo", type=["png", "jpg", "jpeg"])
+        if profile_photo:
+            os.makedirs("profile_photos", exist_ok=True)
+            photo_path = f"profile_photos/{user['email']}.jpg"
+            with open(photo_path, "wb") as f:
+                f.write(profile_photo.getbuffer())
+            user["photo"] = photo_path
+            st.image(photo_path, width=150)
+
+        if st.button("Save Profile"):
+            user["name"] = name
+            user["location"] = location
+            user["availability"] = availability
+            user["skills_offered"] = [s.strip() for s in skills_offered.split(",") if s.strip()]
+            user["skills_wanted"] = [s.strip() for s in skills_wanted.split(",") if s.strip()]
+            user["public"] = is_public
+
+            users = load_users()
+            for u in users:
+                if u["email"] == user["email"]:
+                    u.update(user)
+            save_users(users)
+            st.success("Profile updated successfully!")
+
+        # Preview section - moved inside the `with tabs[4]:` block
+        st.markdown("### Your Profile Preview")
+
+        # SAFELY show image
+        photo_path = user.get("photo")
+        if photo_path and os.path.exists(photo_path):
+            st.image(photo_path, width=100)
+        else:
+            st.markdown("_No profile photo uploaded._")
+
+        # Show other profile info
+        st.markdown(f"**Name:** {user['name']}  \n**Location:** {user['location']}  \n**Availability:** {user['availability']}")
+        st.markdown(f"**Skills Offered:** {', '.join(user['skills_offered'])}")
+        st.markdown(f"**Skills Wanted:** {', '.join(user['skills_wanted'])}")

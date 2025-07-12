@@ -1,11 +1,25 @@
 [
   {
-    "name": "Harshita",
-    "email": "harshita@example.com",
-    "password": "pass123",
-    "skills_offered": ["Python"],
-    "skills_wanted": ["Machine Learning"],
+    "email": "john@example.com",
+    "password": "1234",  
+    "name": "John Doe",
+    "location": "New York",
+    "skills_offered": ["Python", "Excel"],
+    "skills_wanted": ["Photoshop", "Video Editing"],
     "availability": "Weekends",
-    "public": true
+    "public": true,
+    "photo": ""  
+  },
+  {
+    "email": "jane@example.com",
+    "password": "abcd",
+    "name": "Jane Smith",
+    "location": "London",
+    "skills_offered": ["Photoshop"],
+    "skills_wanted": ["Python", "Excel"],
+    "availability": "Evenings",
+    "public": false,
+    "photo": ""
   }
 ]
+
