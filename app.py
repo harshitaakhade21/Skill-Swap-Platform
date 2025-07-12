@@ -86,6 +86,31 @@ if outgoing:
 else:
     st.info("No outgoing swap requests.")
 
+st.subheader("📥 Incoming Swap Requests")
+
+incoming = [s for s in swaps if s["to"] == name and s["status"] == "pending"]
+
+if incoming:
+    for i, req in enumerate(incoming):
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.markdown(f"**{req['from']}** wants to swap for **{req['skill']}**")
+
+        with col2:
+            accept = st.button(f"✅ Accept {i}", key=f"accept_{i}")
+            reject = st.button(f"❌ Reject {i}", key=f"reject_{i}")
+
+        if accept:
+            req["status"] = "accepted"
+            save_swaps(swaps)
+            st.success(f"Accepted request from {req['from']}!")
+
+        if reject:
+            req["status"] = "rejected"
+            save_swaps(swaps)
+            st.warning(f"Rejected request from {req['from']}.")
+else:
+    st.info("No incoming requests right now.")
 
 search_skill = st.text_input("Search by skill (e.g., Python, Design)")
 users = load_users()
